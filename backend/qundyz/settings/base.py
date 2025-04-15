@@ -37,7 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'estimates'
+   
+    #сторонние приложения
+    'rest_framework',
+    'corsheaders',
+
+    #собственные приложения
+    'apps.accounts',
+    'apps.projects',
+    'apps.estimates',
+    'apps.ai_integration',
+    'apps.chat',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +60,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'costproject.urls'
+ROOT_URLCONF = 'qundyz.urls'
 
 TEMPLATES = [
     {
@@ -67,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'costproject.wsgi.application'
+WSGI_APPLICATION = 'qundyz.wsgi.application'
 
 
 # Database

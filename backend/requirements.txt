@@ -1,0 +1,9 @@
+Django==5.2
+djangorestframework
+django-cors-headers
+channels
+channels-redis
+djangorestframework-simplejwt
+psycopg2-binary
+celery
+drf-yasg
