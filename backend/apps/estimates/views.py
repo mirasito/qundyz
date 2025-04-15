@@ -1,6 +1,6 @@
 from django.views.generic import ListView, DetailView
 from .models import Estimate, Stage
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 def main_index(request):
     # Здесь рендерим ваш файл: 'index.html' 
