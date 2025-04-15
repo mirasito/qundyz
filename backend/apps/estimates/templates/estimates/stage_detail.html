@@ -8,16 +8,16 @@
 <p>Смета: {{ stage.estimate.name }}</p>
 <p>Описание: {{ stage.description }}</p>
 <p>Длительность: {{ stage.duration_days }} дн.</p>
-<p>Стоимость материалов: {{ stage.total_materials_cost }} руб.</p>
-<p>Стоимость работ: {{ stage.total_works_cost }} руб.</p>
-<p><strong>Итого по этапу:</strong> {{ stage.stage_cost }} руб.</p>
+<p>Стоимость материалов: {{ stage.total_materials_cost }} .</p>
+<p>Стоимость работ: {{ stage.total_works_cost }} тенге.</p>
+<p><strong>Итого по этапу:</strong> {{ stage.stage_cost }} тенге.</p>
 
 <hr>
 <h2>Материалы</h2>
 {% for mat in stage.materials.all %}
   <div>
-    <strong>{{ mat.name }}</strong> – {{ mat.quantity }} {{ mat.unit }} по цене {{ mat.price_per_unit }} руб.
-    <br>Сумма: {{ mat.total_cost }} руб.
+    <strong>{{ mat.name }}</strong> – {{ mat.quantity }} {{ mat.unit }} по цене {{ mat.price_per_unit }} тенге.
+    <br>Сумма: {{ mat.total_cost }} тенге.
   </div>
 {% empty %}
   <p>Нет материалов</p>

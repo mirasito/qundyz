@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'apps.estimates',
     'apps.ai_integration',
     'apps.chat',
-]
+] 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
