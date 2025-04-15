@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Список смет{% endblock %}
+
+{% block content %}
+<h1>Список смет</h1>
+<ul>
+  {% for est in estimates %}
+    <li>
+      <a href="{% url 'estimate_detail' pk=est.pk %}">{{ est.name }}</a>
+      - Итого: {{ est.total_cost }} руб.
+    </li>
+  {% endfor %}
+</ul>
+{% endblock %}

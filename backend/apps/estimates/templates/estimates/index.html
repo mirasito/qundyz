@@ -1,0 +1,119 @@
+{% extends "estimates/base.html" %}
+{% block title %}Apartment App{% endblock %}
+{% block content %}
+<div id="app">
+  <!-- === Screen 1: Выбор способа === -->
+  <div id="screen-1" class="screen active">
+    <h1>Выберите способ</h1>
+    <p class="subtitle">Как вы хотите ввести параметры квартиры?</p>
+    <div class="cards">
+      <div class="card" onclick="goToScreen(2)">
+        <div class="card-icon">📄</div>
+        <h2>Заполнить форму</h2>
+        <p>Удобный пошаговый ввод данных</p>
+      </div>
+      <div class="card" onclick="goToScreen(2)">
+        <div class="card-icon">🏗️</div>
+        <h2>Загрузить план квартиры</h2>
+        <p>Распознаем параметры по чертежу</p>
+      </div>
+      <div class="card" onclick="goToScreen(2)">
+        <div class="card-icon">💬</div>
+        <h2>Чат с ИИ-агентом</h2>
+        <p>Задаст вопросы и всё оформит</p>
+      </div>
+    </div>
+  </div>
+  <!-- /screen-1 -->
+
+  <!-- === Screen 2: Ввод параметров квартиры === -->
+  <div id="screen-2" class="screen">
+    <h1>Введите параметры квартиры</h1>
+    <form id="calcForm" method="POST" action="{% url 'calculate_estimate' %}">
+      {% csrf_token %}
+      <!-- Блок 1: Основные параметры квартиры -->
+      <div class="form-section">
+        <h3 class="section-title">Основные параметры</h3>
+        <div class="form-group">
+          <label for="apartment_area">Площадь квартиры (кв.м.):</label>
+          <input type="number" id="apartment_area" name="apartment_area" required step="0.1" placeholder="например, 75.5" />
+        </div>
+        <div class="form-group">
+          <label for="ceiling_height">Высота потолков (м):</label>
+          <input type="number" id="ceiling_height" name="ceiling_height" required step="0.1" placeholder="например, 2.8" />
+        </div>
+        <div class="form-group">
+          <label>Требуется ли перепланировка?</label>
+          <div class="toggle-group">
+            <input type="radio" id="replan_yes" name="replan" value="yes" required />
+            <label for="replan_yes">Да</label>
+            <input type="radio" id="replan_no" name="replan" value="no" />
+            <label for="replan_no">Нет</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <!-- Заголовок и иконка подсказки в одной строке -->
+          <div class="label-with-tooltip">
+            <label>Качество отделочных материалов:</label>
+            <div class="tooltip-container">
+              <span class="question-mark">?</span>
+              <div class="tooltip-text">
+                Строительные материалы выбраны стандартные с наилучшим соотношением цена/качество
+              </div>
+            </div>
+          </div>
+          <!-- Группа переключателей (три варианта) под заголовком -->
+          <div class="toggle-group material-quality">
+            <input type="radio" id="mat_std" name="material_quality" value="standard" required />
+            <label for="mat_std">Стандарт</label>
+            <input type="radio" id="mat_std_plus" name="material_quality" value="standard_plus" />
+            <label for="mat_std_plus">Стандарт+</label>
+            <input type="radio" id="mat_premium" name="material_quality" value="premium" />
+            <label for="mat_premium">Премиум</label>
+          </div>
+        </div>
+      </div>
+      <!-- /Блок 1 -->
+
+      <!-- Блок 2: Санузлы -->
+      <div class="form-section">
+        <h3 class="section-title">Санузлы</h3>
+        <div class="form-group">
+          <label for="bathrooms_count">Количество санузлов:</label>
+          <input type="number" id="bathrooms_count" name="bathrooms_count" required placeholder="например, 2" />
+        </div>
+        <div class="form-group">
+          <label for="bathrooms_area">Общая площадь санузлов (кв.м.):</label>
+          <input type="number" id="bathrooms_area" name="bathrooms_area" required step="0.1" placeholder="например, 12.0" />
+        </div>
+      </div>
+      <!-- /Блок 2 -->
+
+      <!-- Блок 3: Кухня -->
+      <div class="form-section">
+        <h3 class="section-title">Кухня</h3>
+        <div class="form-group">
+          <label for="kitchen_area">Площадь кухни (кв.м.):</label>
+          <input type="number" id="kitchen_area" name="kitchen_area" required step="0.1" placeholder="например, 10.5" />
+        </div>
+      </div>
+      <!-- /Блок 3 -->
+
+      <!-- Блок кнопок -->
+      <div class="button-group">
+        <button type="submit" class="btn-primary">Рассчитать</button>
+        <button type="button" class="btn-secondary" onclick="goToScreen(1)">Назад</button>
+      </div>
+    </form>
+  </div>
+  <!-- /screen-2 -->
+
+  <!-- === Screen 3: План по спринтам (будет заполняться после расчёта) === -->
+  <div id="screen-3" class="screen">
+    <!-- Это можно оставить пустым или вывести заглушку -->
+    <h1>Результат расчёта</h1>
+    <!-- Результат выведется через серверное представление -->
+  </div>
+  <!-- /screen-3 -->
+</div>
+{% endblock %}

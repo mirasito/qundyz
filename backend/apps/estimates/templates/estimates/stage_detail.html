@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Детали этапа{% endblock %}
+
+{% block content %}
+<h1>Этап: {{ stage.name }}</h1>
+<p>Смета: {{ stage.estimate.name }}</p>
+<p>Описание: {{ stage.description }}</p>
+<p>Длительность: {{ stage.duration_days }} дн.</p>
+<p>Стоимость материалов: {{ stage.total_materials_cost }} руб.</p>
+<p>Стоимость работ: {{ stage.total_works_cost }} руб.</p>
+<p><strong>Итого по этапу:</strong> {{ stage.stage_cost }} руб.</p>
+
+<hr>
+<h2>Материалы</h2>
+{% for mat in stage.materials.all %}
+  <div>
+    <strong>{{ mat.name }}</strong> – {{ mat.quantity }} {{ mat.unit }} по цене {{ mat.price_per_unit }} руб.
+    <br>Сумма: {{ mat.total_cost }} руб.
+  </div>
+{% empty %}
+  <p>Нет материалов</p>
+{% endfor %}
+
+<hr>
+<h2>Работы</h2>
+{% for work in stage.works.all %}
+  <div>
+    <strong>{{ work.name }}</strong> – {{ work.hours }} ч. по цене {{ work.cost_per_hour }} руб/ч.
+    <br>Сумма: {{ work.total_cost }} руб.
+  </div>
+{% empty %}
+  <p>Нет работ</p>
+{% endfor %}
+{% endblock %}
