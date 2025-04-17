@@ -57,7 +57,7 @@
                 class="btn btn--icon delete-btn"
                 title="Удалить этап"
                 onclick="deleteStage(this);event.stopPropagation()">
-          🗑
+          ✖️
         </button>
       </div>
 
@@ -80,7 +80,10 @@
             <tbody>
               {% for w in stage.works.all %}
               <tr>
-                <td><input class="work-name" value="{{ w.name }}"></td>
+                <td>
+                  <textarea class="input--autoGrow work-name" rows="1"
+                            oninput="autoGrow(this)">{{ w.name }}</textarea>
+                </td>
                 <td><input class="work-hours" step="0.1"
                            value="{% if w.name|lower == 'дизайн‑проект' %}{{ estimate.apartment_area }}{% else %}{{ w.hours }}{% endif %}"></td>
                 <td><input class="work-cost" step="0.1"  value="{{ w.cost_per_hour }}"></td>
@@ -91,7 +94,7 @@
                           class="btn btn--icon delete-row"
                           title="Удалить работу"
                           onclick="deleteRow(this)">
-                    🗑
+                          ✖️
                   </button>
                 </td>
               </tr>
@@ -122,7 +125,10 @@
             <tbody>
               {% for m in stage.materials.all %}
               <tr>
-                <td><input class="material-name" value="{{ m.name }}"></td>
+                <td>
+                  <textarea class="input--autoGrow material-name" rows="1"
+                            oninput="autoGrow(this)">{{ m.name }}</textarea>
+                </td>
                 <td><input class="material-quantity" step="0.1" value="{{ m.quantity }}"></td>
                 <td><input class="material-unit" value="{{ m.unit }}"></td>
                 <td><input class="material-price" step="0.1" value="{{ m.price_per_unit }}"></td>
@@ -133,7 +139,7 @@
                           class="btn btn--icon delete-row"
                           title="Удалить материал"
                           onclick="deleteRow(this)">
-                    🗑
+                          ✖️
                   </button>
                 </td>
               </tr>
@@ -167,7 +173,14 @@
   </form>
 </div>
 
-<script src="{% static 'js/autocalc.js' %}"> </script>
+<script src="{% static 'estimates/autocalc.js' %}"> </script>
+<script>
+  function autoGrow(el){
+    el.style.height = "auto";
+    el.style.height = (el.scrollHeight)+"px";
+  }
+  document.querySelectorAll('.input--autoGrow').forEach(autoGrow);
+  </script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
   const emojiMap = [

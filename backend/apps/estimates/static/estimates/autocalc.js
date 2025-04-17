@@ -1,55 +1,60 @@
+/* =======  Автопересчёт сметы  ======= */
 document.addEventListener("DOMContentLoaded", () => {
-  const NF     = new Intl.NumberFormat("ru‑RU",{minimumFractionDigits:2,maximumFractionDigits:2});
-  const safe   = v => isNaN(parseFloat(v)) ? 0 : parseFloat(v);
-  const money  = v => NF.format(v) + " ₸";
 
-  /* маленькая помощница: форматируем input, но “сырое” число
-     храним в data‑атрибуте, чтобы последующие safe(..) работали */
-  const pretty = inp => {
-    const raw = safe(inp.value);
-    inp.dataset.raw = raw;          // сохраняем
-    inp.value = NF.format(raw);     // показываем
-    return raw;
-  };
+  /* ---------- утилиты ---------- */
+  const nf     = new Intl.NumberFormat("ru-RU",
+                 { minimumFractionDigits:2, maximumFractionDigits:2 });
+  const money  = v => nf.format(v) + " ₸";                 // узкий NBSP перед ₸
+  const num    = v => parseFloat(String(v)
+                     .replace(/\s| /g,"")      // убираем пробелы и NBSP
+                     .replace(",",".")) || 0;  // заменяем запятую на точку
 
-  function rowTotal(tr){
-    // материал
-    if (tr.closest(".materials-table")){
-      const qty   = safe(tr.querySelector(".material-quantity").value);
-      const price = pretty(tr.querySelector(".material-price"));
-      return qty * price;
-    }
-    // работа
-    const vol  = safe(tr.querySelector(".work-hours").value);
-    const rate = pretty(tr.querySelector(".work-cost"));
-    return vol * rate;
+  /* ---------- строка ---------- */
+  function rowSum(tr){
+    if (tr.closest(".materials-table")) {                  // материал
+      const qty   = num(tr.querySelector(".material-quantity").value);
+      const price = num(tr.querySelector(".material-price").value);
+      const t = qty * price;
+      tr.querySelector(".material-total").textContent = money(t);
+      return t;
+    }                                                      // работа
+    const vol  = num(tr.querySelector(".work-hours").value);
+    const rate = num(tr.querySelector(".work-cost").value);
+    const t    = vol * rate;
+    tr.querySelector(".work-total").textContent = money(t);
+    return t;
   }
 
-  function stageRecalc(stage){
+  /* ---------- этап ---------- */
+  function stageSum(stage){
     let sum = 0;
-    stage.querySelectorAll("tbody tr").forEach(tr=>{
-      const t = rowTotal(tr);
-      tr.querySelector(".material-total, .work-total").textContent = money(t);
-      sum += t;
-    });
-    stage.querySelector(".stage-cost-display").textContent = money(sum);
-    stage.querySelector(".stage-summary strong").textContent = money(sum);
-    stage.querySelector(".stage-cost-input").value = sum.toFixed(2);
+    stage.querySelectorAll("tbody tr").forEach(tr => sum += rowSum(tr));
+
+    // вывод
+    stage.querySelector(".stage-cost-display").textContent   = money(sum);
+    stage.querySelector(".stage-summary  strong").textContent= money(sum);
+    stage.querySelector(".stage-cost-input").value           = sum.toFixed(2);
     return sum;
   }
 
-  function totalRecalc(){
+  /* ---------- вся смета ---------- */
+  function estimateSum(){
     let total = 0;
-    document.querySelectorAll(".estimate-stage").forEach(s=> total += stageRecalc(s));
-    document.getElementById("total-cost").value        = total.toFixed(2);
+    document.querySelectorAll(".estimate-stage")
+            .forEach(s => total += stageSum(s));
+
+    document.getElementById("total-cost").value          = total.toFixed(2);
     document.getElementById("total-display").textContent = money(total);
   }
 
-  document.body.addEventListener("input", e=>{
-    if (e.target.closest(".cost-table")) totalRecalc();
+  /* ---------- слушаем любые изменения в таблицах ---------- */
+  document.body.addEventListener("input",  e=>{
+    if (e.target.closest(".cost-table")) estimateSum();
+  });
+  document.body.addEventListener("change", e=>{
+    if (e.target.closest(".cost-table")) estimateSum();
   });
 
-  /* ––‑  остальной Ваш код (addRow / deleteRow / …) не трогаем ‑–– */
-
-  totalRecalc();            // первый расчёт
+  /* первый пересчёт после загрузки */
+  estimateSum();
 });
