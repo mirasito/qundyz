@@ -1,0 +1,22 @@
+{% extends "estimates/base.html" %}
+{% block title %}Мои проекты{% endblock %}
+{% block content %}
+<div class="projects-container">
+  <h1>Мои проекты</h1>
+  {% if estimates %}
+    <ul class="projects-list">
+      {% for estimate in estimates %}
+        <li>
+          <a href="{% url 'estimate_detail' pk=estimate.pk %}">
+            {{ estimate.name }} – 
+            {% if estimate.total_cost %}{{ estimate.total_cost }} ₸{% else %}{{ estimate.total_cost }} ₸{% endif %} 
+            ({{ estimate.created_at|date:"d.m.Y" }})
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>У вас пока нет созданных смет. Создайте смету, чтобы она появилась здесь.</p>
+  {% endif %}
+</div>
+{% endblock %}

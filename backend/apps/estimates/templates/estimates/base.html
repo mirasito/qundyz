@@ -8,8 +8,35 @@
   <link rel="stylesheet" href="{% static 'estimates/styles.css' %}">
 </head>
 <body>
-  {% block content %}
-  {% endblock %}
+  <header>
+    <nav class="top-nav">
+      <div class="logo">Qundyz</div>
+      <ul class="nav-links">
+        <li><a href="{% url 'estimate_input' %}">Составь смету</a></li>
+        <li><a href="{% url 'projects' %}">Мои проекты</a></li>
+        <li><a href="{% url 'my_budget' %}">Мой бюджет</a></li>
+        <li><a href="{% url 'marketplace' %}">Маркетплейс</a></li>
+        <li>
+          {% if user.is_authenticated %}
+            <a href="{% url 'user_profile' %}">Профиль</a>
+          {% else %}
+            <a href="{% url 'user_login' %}">Войти</a> / <a href="{% url 'user_register' %}">Регистрация</a>
+          {% endif %}
+        </li>
+      </ul>
+    </nav>
+  </header>
+  
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+  
+  <footer>
+    <p>&copy; 2025 Qundyz</p>
+  </footer>
+  
   <script src="{% static 'estimates/script.js' %}"></script>
+  <script src="{% static 'js/autocalc.js' %}"></script>
 </body>
 </html>

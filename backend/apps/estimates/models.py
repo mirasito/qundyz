@@ -1,28 +1,38 @@
 from django.db import models
+from django.contrib.auth.models import User
+from decimal import Decimal
+from .default_data import generate_default_data_for_stage
 
 class Estimate(models.Model):
-    name = models.CharField(max_length=200, default="Смета #1")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='estimates', null=True, blank=True)
+    name = models.CharField(max_length=255, default="Смета #1")
+    apartment_area = models.FloatField()
+    ceiling_height = models.FloatField()
+    total_cost = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
 
-    def total_cost(self):
+    def computed_total_cost(self):
         return sum(stage.stage_cost() for stage in self.stages.all())
 
     def total_duration(self):
         return sum(stage.duration_days for stage in self.stages.all())
 
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new:
+            from .default_data import populate_default_stages  # <- ленивый импорт
+            populate_default_stages(self)
 
 class Stage(models.Model):
-    estimate = models.ForeignKey(
-        Estimate,
-        on_delete=models.CASCADE,
-        related_name="stages"
-    )
+    estimate = models.ForeignKey(Estimate, on_delete=models.CASCADE, related_name="stages")
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     duration_days = models.IntegerField(default=1)
+    order = models.IntegerField(default=1)
 
     def __str__(self):
         return f"{self.name} (этап в смете {self.estimate.name})"
@@ -36,13 +46,8 @@ class Stage(models.Model):
     def total_works_cost(self):
         return sum(work.total_cost() for work in self.works.all())
 
-
 class Material(models.Model):
-    stage = models.ForeignKey(
-        Stage,
-        on_delete=models.CASCADE,
-        related_name="materials"
-    )
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE, related_name="materials")
     name = models.CharField(max_length=200)
     quantity = models.FloatField(default=1.0)
     unit = models.CharField(max_length=50, default="шт")
@@ -54,13 +59,8 @@ class Material(models.Model):
     def total_cost(self):
         return float(self.quantity) * float(self.price_per_unit)
 
-
 class Work(models.Model):
-    stage = models.ForeignKey(
-        Stage,
-        on_delete=models.CASCADE,
-        related_name="works"
-    )
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE, related_name="works")
     name = models.CharField(max_length=200)
     hours = models.FloatField(default=0.0)
     cost_per_hour = models.DecimalField(max_digits=10, decimal_places=2, default=0)

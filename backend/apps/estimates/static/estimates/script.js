@@ -131,3 +131,56 @@ function addWork(event) {
   closeWorkForm();
   return false;
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Инициализация прослушки для всех полей стоимости и количества
+  document.querySelectorAll(".material-quantity, .material-price, .work-hours, .work-cost").forEach(input => {
+    input.addEventListener("input", recalculateAll);
+  });
+});
+
+function recalculateAll() {
+  let totalEstimate = 0;
+
+  document.querySelectorAll(".estimate-stage").forEach(stage => {
+    let stageTotal = 0;
+
+    // Расчёт стоимости всех материалов
+    const materialRows = stage.querySelectorAll(".materials-table tbody tr");
+    materialRows.forEach(row => {
+      const quantity = parseFloat(row.querySelector(".material-quantity")?.value || 0);
+      const price = parseFloat(row.querySelector(".material-price")?.value || 0);
+      const total = quantity * price;
+
+      const totalCell = row.querySelector(".material-total");
+      if (totalCell) totalCell.textContent = `${total.toFixed(2)} ₸`;
+
+      stageTotal += total;
+    });
+
+    // Расчёт стоимости всех работ
+    const workRows = stage.querySelectorAll(".works-table tbody tr");
+    workRows.forEach(row => {
+      const hours = parseFloat(row.querySelector(".work-hours")?.value || 0);
+      const cost = parseFloat(row.querySelector(".work-cost")?.value || 0);
+      const total = hours * cost;
+
+      const totalCell = row.querySelector(".work-total");
+      if (totalCell) totalCell.textContent = `${total.toFixed(2)} ₸`;
+
+      stageTotal += total;
+    });
+
+    // Обновление стоимости этапа
+    const stageCostField = stage.querySelector(".stage-cost input");
+    if (stageCostField) stageCostField.value = stageTotal.toFixed(2);
+
+    totalEstimate += stageTotal;
+  });
+
+  // Обновление общей суммы сметы
+  const totalEstimateInput = document.getElementById("total-cost");
+  if (totalEstimateInput) {
+    totalEstimateInput.value = totalEstimate.toFixed(2);
+  }
+}

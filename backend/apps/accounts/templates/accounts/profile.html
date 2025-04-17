@@ -1,0 +1,9 @@
+{% extends "estimates/base.html" %}
+{% block title %}Профиль{% endblock %}
+{% block content %}
+<div class="profile-container">
+  <h1>Здравствуйте, {{ user.username }}!</h1>
+  <p>Это ваша страница профиля. Здесь можно увидеть ваши проекты и настроить личные данные.</p>
+  <p><a href="{% url 'logout' %}">Выйти</a></p>
+</div>
+{% endblock %}
