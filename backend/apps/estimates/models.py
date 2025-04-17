@@ -1,13 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import User
 from decimal import Decimal
-from .default_data import generate_default_data_for_stage
 
 class Estimate(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='estimates', null=True, blank=True)
     name = models.CharField(max_length=255, default="Смета #1")
     apartment_area = models.FloatField()
     ceiling_height = models.FloatField()
+    num_bathrooms = models.IntegerField(default=1)
+    bathroom_area = models.FloatField(default=5.0)
+    kitchen_area = models.FloatField(default=10.0)
+
+    MATERIAL_QUALITY_CHOICES = [
+        ('economy', 'Эконом'),
+        ('standard', 'Стандарт'),
+        ('premium', 'Премиум'),
+    ]
+    material_quality = models.CharField(
+        max_length=20, choices=MATERIAL_QUALITY_CHOICES, default='standard')
+
+    has_replanning = models.BooleanField(default=False)
+
     total_cost = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -24,7 +37,7 @@ class Estimate(models.Model):
         is_new = self.pk is None
         super().save(*args, **kwargs)
         if is_new:
-            from .default_data import populate_default_stages  # <- ленивый импорт
+            from .default_data import populate_default_stages
             populate_default_stages(self)
 
 class Stage(models.Model):

@@ -132,10 +132,12 @@ function addWork(event) {
   return false;
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Инициализация прослушки для всех полей стоимости и количества
-  document.querySelectorAll(".material-quantity, .material-price, .work-hours, .work-cost").forEach(input => {
-    input.addEventListener("input", recalculateAll);
+document.addEventListener("DOMContentLoaded",()=>{
+  const emojiMap=[/* … */];
+  document.querySelectorAll(".stage-emoji").forEach(span=>{
+    const t=span.dataset.stage||"";
+    const f=emojiMap.find(([re])=>re.test(t));
+    span.textContent=f?f[1]:"📦";
   });
 });
 

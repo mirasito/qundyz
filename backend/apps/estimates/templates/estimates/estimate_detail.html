@@ -1,124 +1,189 @@
 {% extends "estimates/base.html" %}
-{% load static %}
+{% load static humanize %}
 
 {% block title %}Редактирование сметы{% endblock %}
+
 {% block content %}
-<div id="estimate-detail" class="estimate-container">
+<div class="estimate-container">
   <form method="POST" action="{% url 'estimate_save' estimate.pk %}">
     {% csrf_token %}
 
+    {# технические hidden‑поля #}
+    <input type="hidden" name="num_bathrooms"  value="{{ estimate.num_bathrooms }}">
+    <input type="hidden" name="bathroom_area" value="{{ estimate.bathroom_area }}">
+    <input type="hidden" name="kitchen_area"  value="{{ estimate.kitchen_area }}">
+    <input type="hidden" name="quality_level" value="{{ estimate.quality_level }}">
+    <input type="hidden" name="has_replanning" value="{{ estimate.has_replanning }}">
+
+    <!-- ── шапка ─────────────────────────────────────────────────────────── -->
     <div class="estimate-header">
       <h1 class="estimate-title">
-        Результат расчёта: <input type="text" name="estimate_name" value="{{ estimate.name }}" style="font-size:1.2em; border:none; background:transparent;">
+        <input name="estimate_name" value="{{ estimate.name }}" class="title-edit">
       </h1>
+
       <div class="estimate-total">
         <span class="estimate-label">Общая стоимость:</span>
-        <span class="estimate-amount">
-          <input id="total-cost" type="number" step="0.01" name="total_cost" value="{{ estimate.total_cost|floatformat:2 }}" readonly style="border:none; background:transparent; font-weight:bold; font-size: 20px;"> ₸
+        <input type="hidden" id="total-cost" name="total_cost"
+               value="{{ estimate.total_cost|floatformat:2 }}">
+        <span class="estimate-amount" id="total-display">
+          {{ estimate.total_cost|floatformat:2|intcomma }} ₸
         </span>
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="apartment_area">Площадь квартиры (м²):</label>
-      <input type="number" id="apartment_area" name="apartment_area" step="0.1" value="{{ estimate.apartment_area }}" required>
-    </div>
-    <div class="form-group">
-      <label for="ceiling_height">Высота потолков (м):</label>
-      <input type="number" id="ceiling_height" name="ceiling_height" step="0.1" value="{{ estimate.ceiling_height }}" required>
-    </div>
-
+    <!-- ── ЭТАПЫ ─────────────────────────────────────────────────────────── -->
     {% for stage in estimate.stages.all %}
-      <div class="estimate-stage">
-        <div class="stage-compact" onclick="toggleStageDetails({{ forloop.counter }})">
-          <div class="stage-info">
-            <h2 class="stage-title">
-              <input type="text" name="stage_{{ forloop.counter }}_name" value="{{ stage.name }}" style="border:none; background:transparent; font-size:18px;">
-            </h2>
-          </div>
-          <div class="stage-right">
-            <span class="stage-cost">
-              <input type="number" step="0.01" name="stage_{{ forloop.counter }}_cost" value="{{ stage.stage_cost|floatformat:2 }}" readonly style="border:none; background:transparent; font-weight:bold;"> ₸
-            </span>
-            <span class="stage-arrow" id="arrow-{{ forloop.counter }}">▼</span>
-          </div>
+    <div class="estimate-stage" data-stage-index="{{ forloop.counter }}">
+      <!-- компактная строка‑аккордеон -->
+      <div class="stage-compact" onclick="toggleStageDetails({{ forloop.counter }})">
+        <div class="stage-info">
+          <span class="stage-emoji" data-stage="{{ stage.name }}"></span>
+          <input class="stage-title-input"
+                name="stage_{{ forloop.counter }}_name"
+                value="{{ stage.name }}">
         </div>
 
-        <div class="stage-details" id="details-{{ forloop.counter }}">
-          <div class="stage-block">
-            <h3 class="stage-subtitle">Работы</h3>
-            {% if stage.works.all %}
-            <table class="works-table">
-              <thead>
-                <tr>
-                  <th>Наименование</th>
-                  <th>Объём (м²)</th>
-                  <th>Цена за м²</th>
-                  <th class="work-total">Сумма</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for work in stage.works.all %}
-                <tr>
-                  <td><input type="text" name="work_name" class="work-name" value="{{ work.name }}"></td>
-                  <td><input type="number" name="work_hours" class="work-hours" step="0.1" value="{{ work.hours }}"></td>
-                  <td><input type="number" name="work_cost_per_hour" class="work-cost" step="0.1" value="{{ work.cost_per_hour }}"></td>
-                  <td class="work-total">{{ work.total_cost|floatformat:2 }} ₸</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-            {% else %}
-            <p class="no-items">Нет работ</p>
-            {% endif %}
-            <button type="button" class="btn-secondary" onclick="openWorkForm({{ forloop.counter0 }})">Добавить работу</button>
-          </div>
+        <div class="stage-right">
+          <input type="hidden" class="stage-cost-input"
+                 name="stage_{{ forloop.counter }}_cost"
+                 value="{{ stage.stage_cost|floatformat:2 }}">
+          <span class="stage-cost-display">
+            {{ stage.stage_cost|floatformat:2|intcomma }} ₸
+          </span>
+          <span class="stage-arrow" id="arrow-{{ forloop.counter }}">▼</span>
+        </div>
 
-          <div class="stage-block">
-            <h3 class="stage-subtitle">Материалы</h3>
-            {% if stage.materials.all %}
-            <table class="materials-table">
-              <thead>
-                <tr>
-                  <th>Наименование</th>
-                  <th>Кол-во</th>
-                  <th>Ед. изм.</th>
-                  <th>Цена за ед.</th>
-                  <th class="material-total">Сумма</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for material in stage.materials.all %}
-                <tr>
-                  <td><input type="text" name="material_name" class="material-name" value="{{ material.name }}"></td>
-                  <td><input type="number" name="material_quantity" class="material-quantity" step="0.1" value="{{ material.quantity }}"></td>
-                  <td><input type="text" name="material_unit" class="material-unit" value="{{ material.unit }}"></td>
-                  <td><input type="number" name="material_price_per_unit" class="material-price" step="0.1" value="{{ material.price_per_unit }}"></td>
-                  <td class="material-total">{{ material.total_cost|floatformat:2 }} ₸</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-            {% else %}
-            <p class="no-items">Нет материалов</p>
-            {% endif %}
-            <button type="button" class="btn-secondary" onclick="openMaterialForm({{ forloop.counter0 }})">Добавить материал</button>
-          </div>
+        <button type="button"
+                class="btn btn--icon delete-btn"
+                title="Удалить этап"
+                onclick="deleteStage(this);event.stopPropagation()">
+          🗑
+        </button>
+      </div>
 
-          <div class="stage-summary">
-            Итого по этапу: <strong>{{ stage.stage_cost|floatformat:2 }} ₸</strong>
-          </div>
+      <!-- детали этапа -->
+      <div class="stage-details" id="details-{{ forloop.counter }}">
+        <!-- Работы ------------------------------------------------------- -->
+        <div class="stage-block">
+          <h3 class="stage-subtitle">Работы</h3>
+
+          <table class="cost-table works-table">
+            <thead>
+              <tr>
+                <th>Наименование</th>
+                <th>Площадь, м²</th>
+                <th>Цена за м²</th>
+                <th>Сумма</th>
+                <th class="action-cell"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for w in stage.works.all %}
+              <tr>
+                <td><input class="work-name" value="{{ w.name }}"></td>
+                <td><input class="work-hours" step="0.1"
+                           value="{% if w.name|lower == 'дизайн‑проект' %}{{ estimate.apartment_area }}{% else %}{{ w.hours }}{% endif %}"></td>
+                <td><input class="work-cost" step="0.1"  value="{{ w.cost_per_hour }}"></td>
+                <td class="work-total">{{ w.total_cost|floatformat:2|intcomma }} ₸</td>
+
+                <td>
+                  <button type="button"
+                          class="btn btn--icon delete-row"
+                          title="Удалить работу"
+                          onclick="deleteRow(this)">
+                    🗑
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <button type="button" class="add-row" onclick="addWorkRow(this)">
+            + Добавить работу
+          </button>
+        </div>
+
+        <!-- Материалы ---------------------------------------------------- -->
+        <div class="stage-block">
+          <h3 class="stage-subtitle">Материалы</h3>
+
+          <table class="cost-table materials-table">
+            <thead>
+              <tr>
+                <th>Наименование</th>
+                <th>Кол‑во</th>
+                <th>Ед.</th>
+                <th>Цена за ед.</th>
+                <th>Сумма</th>
+                <th class="action-cell"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for m in stage.materials.all %}
+              <tr>
+                <td><input class="material-name" value="{{ m.name }}"></td>
+                <td><input class="material-quantity" step="0.1" value="{{ m.quantity }}"></td>
+                <td><input class="material-unit" value="{{ m.unit }}"></td>
+                <td><input class="material-price" step="0.1" value="{{ m.price_per_unit }}"></td>
+                <td class="material-total">{{ m.total_cost|floatformat:2|intcomma }} ₸</td>
+
+                <td>
+                  <button type="button"
+                          class="btn btn--icon delete-row"
+                          title="Удалить материал"
+                          onclick="deleteRow(this)">
+                    🗑
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <button type="button" class="add-row" onclick="addMaterialRow(this)">
+            + Добавить материал
+          </button>
+        </div>
+
+        <div class="stage-summary">
+          Итого по этапу: <strong>{{ stage.stage_cost|floatformat:2|intcomma }} ₸</strong>
         </div>
       </div>
+    </div>
     {% endfor %}
 
+    <!-- Добавить / Сохранить ------------------------------------------- -->
     <div class="add-custom">
-      <a href="#" class="add-link" onclick="openAddStageModal()">Добавить этап</a>
+      <button type="button" class="btn btn--secondary" onclick="addStage()">
+        + Добавить этап
+      </button>
     </div>
 
-    <div style="margin-top: 30px; text-align: center;">
-      <button type="submit" class="btn-primary">Сохранить смету</button>
+    <div class="save-block">
+      <button type="submit" class="btn btn--primary">Сохранить смету</button>
     </div>
+
   </form>
 </div>
+
+<script src="{% static 'js/autocalc.js' %}"> </script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+  const emojiMap = [
+    [/план/i,           "🗂️"],
+    [/демонтаж/i,       "🪚"],
+    [/переплан/i,       "🏗️"],
+    [/инженер/i,        "🔧"],
+    [/чернов/i,         "🧱"],
+    [/чистов/i,         "🎨"],
+    [/мебел|декор/i,    "🛋️"]
+  ];
+  document.querySelectorAll(".stage-emoji").forEach(span => {
+    const title = span.dataset.stage;
+    const found = emojiMap.find(([re]) => re.test(title));
+    span.textContent = found ? found[1] : "📦";
+  });
+});
+</script>
 {% endblock %}

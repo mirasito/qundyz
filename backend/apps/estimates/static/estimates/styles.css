@@ -22,7 +22,38 @@ body {
 }
 
 /* ========================== */
-/* 2. Стили экранов (Screen)  */
+/* 2. Типографика и заголовки */
+/* ========================== */
+h1, h2, .section-title {
+  font-weight: 600;
+  color: #333;
+}
+
+h1 {
+  margin-top: 40px;
+  font-size: 24px;
+  text-align: center;
+}
+
+h2 {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  margin: 8px 0 24px;
+  text-align: center;
+  font-size: 16px;
+  color: #444;
+}
+
+.section-title {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+/* ========================== */
+/* 3. Основная структура экранов  */
 /* ========================== */
 .screen {
   display: none; /* Скрываем экраны по умолчанию */
@@ -37,21 +68,13 @@ body {
   display: flex;
 }
 
-.screen h1 {
-  margin-top: 40px;
-  font-size: 24px;
-  text-align: center;
-}
-
-.subtitle {
-  margin: 8px 0 24px;
-  text-align: center;
-  font-size: 16px;
-  color: #444;
+/* Основной контент после шапки */
+main {
+  margin-top: 70px;
 }
 
 /* ========================== */
-/* 3. Стили для карточек (Screen 1)  */
+/* 4. Стили для карточек  */
 /* ========================== */
 .cards {
   width: 100%;
@@ -78,16 +101,67 @@ body {
   margin-bottom: 8px;
 }
 
-.card h2 {
-  font-size: 18px;
-  margin-bottom: 4px;
+/* ========================== */
+/* 5. Формы, поля ввода и группировка */
+/* ========================== */
+/* Унифицированные стили форм */
+.form-group {
+  margin-bottom: 16px;
+}
+
+form label,
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #222;
+}
+
+form input,
+form select,
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Секции формы */
+.form-section {
+  margin-bottom: 30px;
+}
+
+/* Контейнеры форм */
+.register-container,
+.login-container {
+  max-width: 400px;
+  margin: 80px auto;
+  background-color: #f7f7f7;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.register-container h1,
+.login-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-container {
+  max-width: 600px;
+  margin: 80px auto;
+  background-color: #fafafa;
+  padding: 24px;
+  border-radius: 8px;
 }
 
 /* ========================== */
-/* 4. Стили для кнопок */
+/* 6. Кнопки и элементы управления */
 /* ========================== */
-button {
-  margin-top: 16px;
+/* Базовые стили кнопок */
+button, .btn-primary {
   padding: 12px 20px;
   font-size: 16px;
   border: none;
@@ -98,32 +172,19 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
+button:hover, .btn-primary:hover {
   background-color: #1676d1;
 }
 
-/* Группа кнопок в формах */
-.button-group {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-}
-
+/* Расширенные стили кнопок */
 .btn-primary {
   flex: 1;
   padding: 12px 0;
-  background-color: #2d8cf0;
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 16px;
   font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-primary:hover {
-  background-color: #1676d1;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  border-radius: 4px;
 }
 
 .btn-secondary {
@@ -143,74 +204,35 @@ button:hover {
   background-color: #e6f2ff;
 }
 
-/* Медиа-запрос для десктопов */
-@media screen and (min-width: 768px) {
-  #app {
-    max-width: 900px;
-  }
-  
-  #screen-1 h1 {
-    font-size: 28px;
-  }
-  
-  .cards {
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 24px;
-  }
-  
-  .card {
-    flex: 1;
-    margin: 0 8px;
-  }
-  
-  .card-icon {
-    font-size: 32px;
-  }
+/* Группа кнопок */
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
 }
 
-/* ========================== */
-/* 5. Стили формы и группировка полей  */
-/* ========================== */
-
-/* Отступы для каждой группы поля */
-.form-group {
-  margin-bottom: 20px;
+/* Кнопки добавления/удаления */
+.add-row, .delete-row, .delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
-/* Секции формы (разделение на блоки) */
-.form-section {
-  margin-bottom: 30px;
+.add-row {
+  color: #2d8cf0;
 }
 
-.section-title {
-  font-size: 18px;
+.delete-row, .delete-btn {
+  color: #d40000;
   font-weight: 600;
-  margin-bottom: 12px;
-  color: #333;
-}
-
-/* Лейблы полей */
-form label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #222;
-}
-
-/* Поля ввода и селекты */
-form input,
-form select {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 }
 
 /* ========================== */
-/* 6. Стили переключателей (Toggle Group)  */
+/* 7. Переключатели и подсказки */
 /* ========================== */
+/* Переключатели (Toggle Group) */
 .toggle-group {
   display: inline-flex;
   gap: 12px;
@@ -245,9 +267,7 @@ form select {
   color: #fff;
 }
 
-/* ========================== */
-/* 7. Стили для подсказок (Tooltip)  */
-/* ========================== */
+/* Подсказки (Tooltip) */
 .label-with-tooltip {
   display: inline-flex;
   align-items: center;
@@ -311,7 +331,146 @@ form select {
 }
 
 /* ========================== */
-/* 8. Стили для страницы сметы (Estimate) */
+/* 8. Таблицы и данные */
+/* ========================== */
+/* Унифицированные таблицы */
+.cost-table, 
+.materials-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.cost-table {
+  table-layout: fixed;
+  margin-top: .5rem;
+}
+
+.cost-table th, 
+.cost-table td, 
+.materials-table th, 
+.materials-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.cost-table th {
+  background: #f0f0f0;
+  font-weight: 600;
+}
+
+.cost-table td {
+  padding: .4rem;
+  font-size: .95rem;
+}
+
+.cost-table input {
+  width: 100%;
+  border: none;
+  background: transparent;
+}
+
+/* Специфичные стили полей */
+.stage-title-input,
+.title-edit {
+  font: 600 1.1rem/1 sans-serif;
+  border: none;
+  background: transparent;
+}
+
+.stage-cost-display {
+  font-weight: 600;
+  min-width: 6rem;
+  text-align: right;
+}
+
+/* Перенос длинных названий */
+.works-table td input,
+.materials-table td input {
+  max-width: 200px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Псевдо-элементы для валюты */
+.stage-cost input,
+.material-total,
+.work-total {
+  position: relative;
+  padding-right: 1.5em;
+}
+
+.stage-cost input::after,
+.material-total::after,
+.work-total::after {
+  content: " ₸";
+  position: absolute;
+  right: 0.25em;
+}
+
+.estimate-amount:before {
+  content: "";
+}
+
+.estimate-amount input {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+/* ========================== */
+/* 9. Навигация и шапка */
+/* ========================== */
+.top-nav {
+  background-color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 70px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.top-nav .logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #f1f1f1;
+  letter-spacing: 1px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.nav-links li {
+  margin-left: 1.5rem;
+}
+
+.nav-links li a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-links li a:hover {
+  background-color: #575757;
+  color: #ffcc00;
+}
+
+/* ========================== */
+/* 10. Компоненты для страницы сметы */
 /* ========================== */
 .estimate-container {
   max-width: 800px;
@@ -341,51 +500,6 @@ form select {
   font-size: 24px;
   font-weight: 700;
   color: #2c3e50;
-}
-/* Таблица для материалов */
-.materials-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 8px;
-  font-size: 14px;
-}
-
-.materials-table th,
-.materials-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-/* Пример модального окна */
-.modal {
-  display: none; /* скрыто по умолчанию */
-  position: fixed; 
-  z-index: 9999; 
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto; 
-  background-color: rgba(0, 0, 0, 0.5); /* затемнение фона */
-}
-
-.modal-content {
-  background-color: #fff;
-  margin: 100px auto;
-  padding: 20px;
-  border-radius: 8px;
-  width: 300px; /* ширина окна */
-  position: relative;
-}
-
-.close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  font-size: 20px;
-  color: #999;
 }
 
 /* Карточка этапа */
@@ -453,6 +567,7 @@ form select {
   color: #333;
 }
 
+/* Списки работ и материалов */
 .work-list, .material-list {
   list-style: none;
   padding: 0;
@@ -505,138 +620,121 @@ form select {
   text-decoration: underline;
 }
 
-/* ========================== */
-/* 9. Стили для шапки и навигации */
-/* ========================== */
-
-/* Фиксированный хедер на всю ширину */
-.top-nav {
-  background-color: #1a1a1a;      /* Темный фон */
-  display: flex;                /* Горизонтальное расположение элементов */
-  align-items: center;          /* Центрирование по вертикали */
-  justify-content: space-between; /* Логотип слева, меню справа */
-  padding: 0 2rem;              /* Отступы слева/справа */
-  height: 70px;                 /* Фиксированная высота */
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Легкая тень */
-  position: fixed;              /* Фиксированная шапка */
-  top: 0;
+/* Модальное окно */
+.modal {
+  display: none;
+  position: fixed; 
+  z-index: 9999; 
   left: 0;
-  right: 0;
-  z-index: 1000;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; 
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
-/* Логотип в шапке */
-.top-nav .logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #f1f1f1;
-  letter-spacing: 1px;
+.modal-content {
+  background-color: #fff;
+  margin: 100px auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  position: relative;
 }
 
-/* Контейнер для ссылок (меню) */
-.nav-links {
-  list-style: none;
-  display: flex;              /* Горизонтальное расположение списка */
-  align-items: center;
-  margin: 0;
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #999;
 }
 
-/* Каждый элемент меню */
-.nav-links li {
-  margin-left: 1.5rem;
+.save-block {
+  text-align: center;
+  margin: 2rem 0;
 }
 
-/* Ссылки в меню */
-.nav-links li a {
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 8px 16px;
-  border-radius: 4px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* ========================== */
+/* 11. Медиа-запросы */
+/* ========================== */
+@media screen and (min-width: 768px) {
+  #app {
+    max-width: 900px;
+  }
+  
+  #screen-1 h1 {
+    font-size: 28px;
+  }
+  
+  .cards {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  
+  .card {
+    flex: 1;
+    margin: 0 8px;
+  }
+  
+  .card-icon {
+    font-size: 32px;
+  }
+  
+  .top-nav {
+    padding: 0 2rem;
+  }
 }
 
-/* Эффект при наведении */
-.nav-links li a:hover {
-  background-color: #575757;
-  color: #ffcc00;
-}
-
-/* Подгонка для мобильных устройств */
 @media (max-width: 768px) {
   .top-nav {
     padding: 0 1rem;
   }
+
   .nav-links li {
     margin-left: 1rem;
   }
 }
 
-/* Отступ для основного контента, чтобы он не скрывался за фиксированной шапкой */
-main {
-  margin-top: 70px;
+@media (min-width: 992px) {
+  .estimate-container {
+    max-width: 1100px;
+  }
 }
 
-/* Пример улучшенного вида для формы регистрации/логина */
-.register-container,
-.login-container {
-  max-width: 400px;
-  margin: 80px auto;
-  background-color: #f7f7f7;
-  padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* ───────────────────────────────
+   Иконки‑кнопки  (крестики ×)
+─────────────────────────────────*/
+.btn--icon{
+  width:24px;height:24px;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:0;border:none;border-radius:50%;
+  background:transparent;color:#d00000;font-size:16px;line-height:0;
+  transition:background-color .15s ease,transform .1s ease;
+}
+.btn--icon:hover      { background:#f9d8d8;transform:scale(1.15); }
+.btn--icon:focus      { outline:none; }
+
+/* крестик удаления ЭТАПА – плавающий в правом‑верхнем углу карточки */
+.estimate-stage{ position:relative; }
+.estimate-stage .delete-btn{
+  position:absolute;top:6px;right:6px;           /* над стрелкой ▼/▲ */
 }
 
-.register-container h1,
-.login-container h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
+/* ячейка с крестиком удаления СТРОКИ */
+td.action-cell        { width:32px;text-align:center; }
 
-.form-group {
-  margin-bottom: 16px;
-}
+/* ────────────────────────────────────────────── */
+/* компактная action‑ячейка и кнопка‑иконка      */
+.action-cell            { width: 26px; text-align:center; }
+.btn--icon              { background:none; border:0; cursor:pointer;
+                          font-size:0.85rem; line-height:1; color:#d40000; }
+.btn--icon:hover        { color:#ff4a4a; }
+/* чтобы крестики не прилипали к рамке */
+.cost-table td .btn--icon { margin: 0 2px; }
 
-.form-group label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #222;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.btn-primary {
-  display: inline-block;
-  width: 100%;
-  padding: 12px;
-  background-color: #2d8cf0;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-align: center;
-}
-
-.btn-primary:hover {
-  background-color: #1676d1;
-}
-
-/* Профиль-страница */
-.profile-container {
-  max-width: 600px;
-  margin: 80px auto;
-  background-color: #fafafa;
-  padding: 24px;
-  border-radius: 8px;
-}
+/* ---------- эмоджи‑иконка этапа ---------- */
+.stage-info           { display:flex;align-items:center;gap:.5rem }
+.stage-emoji          { font-size:1.8rem;line-height:1;flex-shrink:0 }

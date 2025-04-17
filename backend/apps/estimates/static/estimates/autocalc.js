@@ -1,62 +1,55 @@
-document.addEventListener("DOMContentLoaded", function () {
-    function parseFloatSafe(value) {
-      const parsed = parseFloat(value);
-      return isNaN(parsed) ? 0 : parsed;
+document.addEventListener("DOMContentLoaded", () => {
+  const NF     = new Intl.NumberFormat("ru‑RU",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const safe   = v => isNaN(parseFloat(v)) ? 0 : parseFloat(v);
+  const money  = v => NF.format(v) + " ₸";
+
+  /* маленькая помощница: форматируем input, но “сырое” число
+     храним в data‑атрибуте, чтобы последующие safe(..) работали */
+  const pretty = inp => {
+    const raw = safe(inp.value);
+    inp.dataset.raw = raw;          // сохраняем
+    inp.value = NF.format(raw);     // показываем
+    return raw;
+  };
+
+  function rowTotal(tr){
+    // материал
+    if (tr.closest(".materials-table")){
+      const qty   = safe(tr.querySelector(".material-quantity").value);
+      const price = pretty(tr.querySelector(".material-price"));
+      return qty * price;
     }
-  
-    function updateMaterialCost(row) {
-      const qty = parseFloatSafe(row.querySelector('[name$="_quantity"]').value);
-      const price = parseFloatSafe(row.querySelector('[name$="_price_per_unit"]').value);
-      const total = qty * price;
-      row.querySelector(".material-total").textContent = `${total.toFixed(2)} ₸`;
-      return total;
-    }
-  
-    function updateWorkCost(row) {
-      const hours = parseFloatSafe(row.querySelector('[name$="_hours"]').value);
-      const rate = parseFloatSafe(row.querySelector('[name$="_cost_per_hour"]').value);
-      const total = hours * rate;
-      row.querySelector(".work-total").textContent = `${total.toFixed(2)} ₸`;
-      return total;
-    }
-  
-    function updateStageCost(stageElem) {
-      let stageTotal = 0;
-  
-      stageElem.querySelectorAll(".materials-table tbody tr").forEach(row => {
-        stageTotal += updateMaterialCost(row);
-      });
-  
-      stageElem.querySelectorAll(".works-table tbody tr").forEach(row => {
-        stageTotal += updateWorkCost(row);
-      });
-  
-      const stageCostInput = stageElem.querySelector('.stage-cost input');
-      if (stageCostInput) {
-        stageCostInput.value = stageTotal.toFixed(2);
-      }
-  
-      stageElem.querySelector(".stage-summary strong").textContent = `${stageTotal.toFixed(2)} ₸`;
-      return stageTotal;
-    }
-  
-    function updateTotalEstimate() {
-      let estimateTotal = 0;
-      document.querySelectorAll(".estimate-stage").forEach(stage => {
-        estimateTotal += updateStageCost(stage);
-      });
-  
-      const totalField = document.querySelector('input[name="total_cost"]');
-      if (totalField) {
-        totalField.value = estimateTotal.toFixed(2);
-      }
-  
-      document.querySelector(".estimate-amount input").value = estimateTotal.toFixed(2);
-    }
-  
-    document.querySelectorAll(".materials-table input, .works-table input").forEach(input => {
-      input.addEventListener("input", updateTotalEstimate);
+    // работа
+    const vol  = safe(tr.querySelector(".work-hours").value);
+    const rate = pretty(tr.querySelector(".work-cost"));
+    return vol * rate;
+  }
+
+  function stageRecalc(stage){
+    let sum = 0;
+    stage.querySelectorAll("tbody tr").forEach(tr=>{
+      const t = rowTotal(tr);
+      tr.querySelector(".material-total, .work-total").textContent = money(t);
+      sum += t;
     });
-  
-    updateTotalEstimate(); // начальный пересчёт
+    stage.querySelector(".stage-cost-display").textContent = money(sum);
+    stage.querySelector(".stage-summary strong").textContent = money(sum);
+    stage.querySelector(".stage-cost-input").value = sum.toFixed(2);
+    return sum;
+  }
+
+  function totalRecalc(){
+    let total = 0;
+    document.querySelectorAll(".estimate-stage").forEach(s=> total += stageRecalc(s));
+    document.getElementById("total-cost").value        = total.toFixed(2);
+    document.getElementById("total-display").textContent = money(total);
+  }
+
+  document.body.addEventListener("input", e=>{
+    if (e.target.closest(".cost-table")) totalRecalc();
   });
+
+  /* ––‑  остальной Ваш код (addRow / deleteRow / …) не трогаем ‑–– */
+
+  totalRecalc();            // первый расчёт
+});
