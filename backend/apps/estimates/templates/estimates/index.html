@@ -12,7 +12,7 @@
         <h2>Заполнить форму</h2>
         <p>Удобный пошаговый ввод данных</p>
       </div>
-      <div class="card" onclick="goToScreen(2)">
+      <div class="card" onclick="goToScreen(3)">
         <div class="card-icon">🏗️</div>
         <h2>Загрузить план квартиры</h2>
         <p>Распознаем параметры по чертежу</p>
@@ -52,7 +52,6 @@
           </div>
         </div>
         <div class="form-group">
-          <!-- Заголовок и иконка подсказки в одной строке -->
           <div class="label-with-tooltip">
             <label>Качество отделочных материалов:</label>
             <div class="tooltip-container">
@@ -62,7 +61,6 @@
               </div>
             </div>
           </div>
-          <!-- Группа переключателей (три варианта) под заголовком -->
           <div class="toggle-group material-quality">
             <input type="radio" id="mat_std" name="material_quality" value="standard" required />
             <label for="mat_std">Стандарт</label>
@@ -108,12 +106,30 @@
   </div>
   <!-- /screen-2 -->
 
-  <!-- === Screen 3: План по спринтам (будет заполняться после расчёта) === -->
+  <!-- === Screen 3: Загрузка плана квартиры === -->
   <div id="screen-3" class="screen">
-    <!-- Это можно оставить пустым или вывести заглушку -->
+    <h1>Загрузите план квартиры</h1>
+    <form id="uploadForm" method="POST" action="{% url 'upload_plan' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-section">
+        <div class="form-group">
+          <label for="plan_file">Файл чертежа (PDF, изображение):</label>
+          <input type="file" id="plan_file" name="plan_file" accept=".pdf,image/*" required />
+        </div>
+      </div>
+      <div class="button-group">
+        <button type="submit" class="btn-primary">Загрузить</button>
+        <button type="button" class="btn-secondary" onclick="goToScreen(1)">Назад</button>
+      </div>
+    </form>
+  </div>
+  <!-- /screen-3 -->
+
+  <!-- === Screen 4: План по спринтам (результат) === -->
+  <div id="screen-4" class="screen">
     <h1>Результат расчёта</h1>
     <!-- Результат выведется через серверное представление -->
   </div>
-  <!-- /screen-3 -->
+  <!-- /screen-4 -->
 </div>
 {% endblock %}
